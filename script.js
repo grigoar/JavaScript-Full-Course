@@ -313,6 +313,57 @@ console.log(`I'm ${2028 - 1992} years old`);
 // The statements produce an expression => and the expression produce a value
 const me = "Grig";//this is a statement that produce an expression " me" and that is a string value "me"
 
+//---------------------------The conditional operator
+//An operator is an expression
+//Ternary operator
+// const age = 13;
+// age >= 18 ? console.log("I like to drink beer") : console.log("I like to drink juice");
+
+// //usually used like this
+// const drink = age >= 18 ? "wine" : "water";
+// console.log(drink);
+
+// //much better than this
+// let drink2;
+// if (age >= 18) {
+//     drink = "wine";
+// } else {
+//     drink2 = "water";
+// }
+// console.log(drink2);
+
+// //because it is an expression it can be used on string literals
+// console.log(`I like to drink ${age >= 18 ? "wine" : "water"}`);
+
+
+//------------------------another challenge -ternary operation
+
+const bill = 275
+const tip = (bill > 50 && bill < 300) ? 15 / 100 : 20 / 100;
+
+console.log(`The bill was ${bill}, the tip was ${tip} and the total value was ${bill + bill * tip}`);
+
+//-----------------------ES5(ECMA Script 5) , ES6, ES6+...... and ES Next
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
