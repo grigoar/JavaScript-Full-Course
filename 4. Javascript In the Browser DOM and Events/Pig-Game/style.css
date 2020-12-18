@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
-
 * {
   margin: 0;
   padding: 0;
@@ -23,6 +22,7 @@ body {
 }
 
 /* LAYOUT */
+
 main {
   position: relative;
   width: 100rem;
@@ -46,6 +46,7 @@ main {
 }
 
 /* ELEMENTS */
+
 .name {
   position: relative;
   font-size: 4rem;
@@ -66,9 +67,11 @@ main {
 .player--active {
   background-color: rgba(255, 255, 255, 0.4);
 }
+
 .player--active .name {
   font-weight: 700;
 }
+
 .player--active .score {
   font-weight: 400;
 }
@@ -100,6 +103,7 @@ main {
 }
 
 /* ABSOLUTE POSITIONED ELEMENTS */
+
 .btn {
   position: absolute;
   left: 50%;
@@ -113,11 +117,9 @@ main {
   cursor: pointer;
   font-weight: 400;
   transition: all 0.2s;
-
   background-color: white;
   background-color: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(10px);
-
   padding: 0.7rem 2.5rem;
   border-radius: 50rem;
   box-shadow: 0 1.75rem 3.5rem rgba(0, 0, 0, 0.1);
@@ -132,9 +134,11 @@ main {
 .btn--new {
   top: 4rem;
 }
+
 .btn--roll {
   top: 39.3rem;
 }
+
 .btn--hold {
   top: 46.1rem;
 }
@@ -164,4 +168,8 @@ main {
 .player--winner .name {
   font-weight: 700;
   color: #c7365f;
+}
+
+.hidden {
+  display: none;
 }
