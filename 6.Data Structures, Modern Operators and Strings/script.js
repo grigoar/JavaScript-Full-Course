@@ -16,7 +16,8 @@ const openingHours = {
     close: 23,
   },
   // sat: {
-  [`day-${2 + 6}`]: {
+  // [`day-${2 + 6}`]: {
+  [weekdays[5]]: {
     open: 0, // Open 24 hours
     close: 24,
   },
@@ -438,5 +439,380 @@ const restaurant = {
 // console.log([...menu.entries()]);
 
 //---------------------------------Enhanced Object Literals-------------------------------
-console.log(restaurant);
+// console.log(restaurant);
 //enhances methods, fields name, and compute property names
+
+//-------------------------Optional chaining--------------------
+
+// if (restaurant.openingHours && restaurant.openingHours.mon) {
+//   console.log(restaurant.openingHours.mon.open);
+// }
+// if (restaurant.openingHours.fri) {
+//   console.log(restaurant.openingHours.fri.open);
+// }
+
+// //with OPTIONAL CHAINING
+// // console.log(restaurant.openingHours.mon.open);
+// console.log(restaurant.openingHours.mon?.open); //if is not defined we get undefined right away
+// console.log(restaurant.openingHours?.mon?.open);
+
+// const days = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+
+// for (const day of days) {
+//   console.log(day);
+//   //we can define a default
+//   // const open = restaurant.openingHours[day]?.open || "closed";
+//   const open = restaurant.openingHours[day]?.open ?? "closed";
+//   // openingHours.mon
+//   console.log(`On ${day}, we open at ${open}`);
+// }
+
+// //Methods
+// console.log(restaurant.order?.(0, 1) ?? "Method does not exist");
+// console.log(restaurant.orderRisotto?.(0, 1) ?? "Method does not exist");
+
+// //Arrays
+// const users = [{ name: "Grig", email: "grig@yahoo.com" }];
+// console.log(users[0]?.name ?? "User array empty");
+// console.log(users[1]?.name ?? "User array empty");
+
+// if (users.length > 0) console.log(users[0].name);
+// else console.log("user array empty");
+
+//-------------------------Looping objects object Keys, Values and Entries
+
+// //Properties names
+// const properties = Object.keys(openingHours);
+// console.log(properties);
+
+// // console.log(`We are open on ${properties.length} days`);
+// let openStr = `We are open on ${properties.length} days: `;
+
+// // for (const day of Object.keys(openingHours)) {
+// for (const day of properties) {
+//   // console.log(day);
+//   openStr += `${day}, `;
+// }
+// console.log(openStr);
+
+// //Property Values
+// const values = Object.values(openingHours);
+// console.log(values);
+
+// //loop Entire object
+// //return an array of entries
+// const entries = Object.entries(openingHours);
+// // console.log(entries);
+
+// // for (const x of entries) {
+// // for a simple structure we can use const [key, value], but here is an object as a value
+// for (const [key, { open, close }] of entries) {
+//   // console.log(x);
+//   console.log(`On ${key} we open at ${open} and close at ${close}`);
+// }
+
+//-------------------------------------Challenge 2-----------------------------
+// const game = {
+//   team1: "Bayern Munich",
+//   team2: "Borrussia Dortmund",
+//   players: [
+//     [
+//       "Neuer",
+//       "Pavard",
+//       "Martinez",
+//       "Alaba",
+//       "Davies",
+//       "Kimmich",
+//       "Goretzka",
+//       "Coman",
+//       "Muller",
+//       "Gnarby",
+//       "Lewandowski",
+//     ],
+//     [
+//       "Burki",
+//       "Schulz",
+//       "Hummels",
+//       "Akanji",
+//       "Hakimi",
+//       "Weigl",
+//       "Witsel",
+//       "Hazard",
+//       "Brandt",
+//       "Sancho",
+//       "Gotze",
+//     ],
+//   ],
+//   score: "4:0",
+//   scored: ["Lewandowski", "Gnarby", "Lewandowski", "Hummels"],
+//   date: "Nov 9th, 2037",
+//   odds: {
+//     team1: 1.33,
+//     x: 3.25,
+//     team2: 6.5,
+//   },
+// };
+
+// const playersScored = Object.entries(game.scored);
+// // for (const [key, player] of playersScored) {
+// //if there is an array we use method "entries()" and if we want to loop an object we use the Object.entries(ourObject)
+// for (const [key, player] of game.scored.entries()) {
+//   console.log(key, typeof key);
+//   const goalNr = Number(key) + 1;
+//   console.log(`Goal ${goalNr}: ${player}`);
+// }
+
+// const odds = Object.values(game.odds);
+// let avrOdds = 0;
+// for (const odd of odds) {
+//   avrOdds += odd;
+// }
+// console.log(avrOdds / odds.length);
+
+// const oddsTeams = Object.entries(game.odds);
+// for (const [team, odd] of oddsTeams) {
+//   //my implementation------------------------
+//   // const teamD = game[team];
+//   // console.log(game[team]);
+//   // // game[team] !== "x"
+//   // //   ? console.log(`Odd of victory ${teamD}: ${odd}`)
+//   // //   : console.log(`Odd of draw: ${odd}`);
+//   // game[team]
+//   //   ? console.log(`Odd of victory ${teamD}: ${odd}`)
+//   //   : console.log(`Odd of draw: ${odd}`);
+
+//   //nicer implementation
+//   const teamStr = team === "x" ? "draw" : `victory ${game[team]}`;
+//   console.log(`Odd of ${teamStr}: ${odd}`);
+// }
+
+// const scorers = {};
+// for (const player of game.scored) {
+//   // console.log(scorer);
+//   scorers[player] ? scorers[player]++ : (scorers[player] = 1);
+// }
+// console.log(scorers);
+
+// //------------------------------------Sets
+// const ordersSet = new Set([
+//   "Pasta",
+//   "Pizza",
+//   "Pizza",
+//   "Risotto",
+//   "Pasta",
+//   "Pizza",
+// ]);
+// console.log(ordersSet);
+
+// console.log(new Set("Grig"));
+
+// console.log(ordersSet.size);
+// //has method to check if an element is in array, like the include for Arrays
+// console.log(ordersSet.has("Pizza"));
+// console.log(ordersSet.has("Bread"));
+
+// //add elements
+// ordersSet.add("Garlic Bread");
+// ordersSet.add("Garlic Bread");
+// console.log(ordersSet);
+
+// //remove elements
+// ordersSet.delete("Risotto");
+// console.log(ordersSet);
+// // ordersSet.clear();
+// for (const order of ordersSet) {
+//   console.log(order);
+// }
+
+// //in Set there are no indexes
+
+// //Example
+// const staff = ["Waiter", "chef", "Waiter", "manager", "Chef", "Master"];
+// // const staffUnique = new Set(staff);
+// //conversion from set to array
+// const staffUnique = [...new Set(staff)];
+// console.log(staffUnique);
+// console.log(
+//   //how many entries are unique in the array
+//   new Set(["Waiter", "chef", "Waiter", "manager", "Chef", "Master"]).size
+// );
+
+// //how much unique letters are in my name?
+// console.log(new Set("nathgrigore").size);
+
+//--------------------------------------------------Maps
+// const rest = new Map();
+// rest.set("name", "Classico Italiano");
+// rest.set(1, "Firenze, Italy");
+// rest.set(2, "Lisbon, Portugal");
+// console.log(rest.set(2, "Lisbon, Portugal"));
+
+// ///we can chain the setting the new elements
+// rest
+//   .set("categories", ["Italian", "Pizzeria", "Vegetarian", "Organic"])
+//   .set("open", 11)
+//   .set("close", 23)
+//   .set(true, "We are open :D")
+//   .set(false, "We are closed");
+
+// console.log(rest.get("name"));
+// console.log(rest.get(true));
+// console.log(rest.get("1"));
+// console.log(rest.get(1));
+
+// const time = 21;
+// //clever but not practical
+// console.log(rest.get(time > rest.get("open") && time < rest.get("close")));
+
+// console.log(rest.has("categories"));
+// rest.delete(2);
+
+// const arr = [1, 2];
+// // rest.set([1, 2], "Test");
+// rest.set(arr, "Test");
+// console.log(rest);
+
+// // rest.clear();
+// console.log(rest.size);
+
+// //using array as map keys, need a separate variable
+// console.log(rest.get([1, 2])); //undefined
+// console.log(rest.get(arr));
+
+// //can add DOM elements
+// rest.set(document.querySelector("h1"), "Heading");
+// console.log(rest);
+
+// //we can create a new map directly with the values like an array
+// //but if we need to add new entries programmatically we need the set method
+// const question = new Map([
+//   ["question", "What is the best programming language in the world?"],
+//   [1, "C"],
+//   [2, "Java"],
+//   [3, "JavaScript"],
+//   ["correct", 3],
+//   [true, "Correct :d"],
+//   [false, "Try again"],
+// ]);
+// console.log(question);
+
+// //Convert object to map
+// console.log(Object.entries(openingHours));
+// const hoursMap = new Map(Object.entries(openingHours));
+
+// console.log(hoursMap);
+
+// //Quiz app
+// //Iteration of Maps
+// console.log(question.get("question"));
+// for (const [key, value] of question) {
+//   if (typeof key === "number") {
+//     console.log(`Answer ${key}: ${value}`);
+//   }
+// }
+// // const answer = Number(prompt("Your answer"));
+// const answer = 3;
+// console.log(answer);
+
+// // if (answer === question.get("correct")) console.log(question.get(true));
+// // else console.log(question.get(false));
+// console.log(question.get(answer === question.get("correct")));
+
+// //convert a map to an array
+// console.log([...question]);
+// console.log(...question.entries());
+// console.log(...question.values());
+// console.log(...question.keys());
+
+//------------------------------------Which data structure to use?
+// 76.	Arrays: - Use when you need ordered list of values(might contain duplicates); - Use when you need to manipulate data as arrays have handy methods.
+// 77.	Sets: -Use when you need to work with unique values; -Use when high-performance is really important; -Use to remove duplicates from arrays
+// 78.	Objects: -More “traditional” key/value store (“abused” objects); -Easier to write and access values with . and []; -Use when you need to include functions (methods); - Use when working with JSON(can convert to map)
+// 79.	Maps: -Better Performance; -Keys can have any data type ; -Easy to iterate ; -Easy to compute size; -Use when you simply need to map key to values; - Use when you need keys that are not strings
+
+//-------------------------------------Challenge nr3
+// const gameEvents = new Map([
+//   [17, "⚽️ GOAL"],
+//   [36, "🔁 Substitution"],
+//   [47, "⚽️ GOAL"],
+//   [61, "🔁 Substitution"],
+//   [64, "🔶 Yellow card"],
+//   [69, "🔴 Red card"],
+//   [70, "🔁 Substitution"],
+//   [72, "🔁 Substitution"],
+//   [76, "⚽️ GOAL"],
+//   [80, "⚽️ GOAL"],
+//   [92, "🔶 Yellow card"],
+// ]);
+// // const gameEvents = new Map([
+// //   []
+// // ]);
+
+// // const events = [...gameEvents.values];
+// // console.log(...gameEvents.values());
+
+// console.log(...gameEvents.values());
+// //creating an array from a set
+// // const events = new Set(gameEvents.values());
+// const events = [...new Set(gameEvents.values())];
+// console.log(events);
+// // console.log(events);
+// gameEvents.delete(64);
+// console.log(gameEvents);
+// console.log(
+//   `An even happened, on average, every ${90 / gameEvents.size} minutes`
+// );
+// const time = [...gameEvents.keys()].pop();
+// console.log(time);
+
+// for (const [key, value] of gameEvents) {
+//   const half = key <= 45 ? `[FIRST HALF]` : `[SECOND HALF]`;
+//   console.log(`${half} ${key}: ${value}`);
+// }
+
+//------------------------Strings-------------------------
+//Stings are primitives and are immutable
+const airline = "TAP Air Portugal";
+const plane = "A320";
+console.log(plane[0]);
+console.log(plane[1]);
+console.log(plane[2]);
+console.log("B737"[0]);
+
+console.log(airline.length);
+console.log("B747".length);
+
+//at what position a character is in the sting
+console.log(airline.indexOf("r"));
+console.log(airline.lastIndexOf("r"));
+//case sensitive
+console.log(airline.indexOf("Portugal"));
+
+//extraction start at position ...
+//don`t change the initial string and return a new string
+console.log(airline.slice(4));
+console.log(airline.slice(4, 6)); //2 characters extracted
+
+//extract without hard code
+console.log(airline.slice(0, airline.indexOf(" ")));
+console.log(airline.slice(airline.lastIndexOf(" ") + 1));
+
+console.log(airline.slice(-2));
+console.log(airline.slice(1, -1));
+
+const checkMiddleSeat = function (seat) {
+  //B and E are middle seats
+  const s = seat.slice(-1);
+  if (s === "B" || s === "E") {
+    console.log("you got the middle seat :D");
+  } else console.log("You got lucky");
+};
+checkMiddleSeat("11B");
+checkMiddleSeat("23C");
+checkMiddleSeat("3E");
+
+//Boxing. Javascript is smart and takes the primitive string and converts behind the scene to an object string so we can call the methods. After calling the method it returns a primitive string again(unboxing)
+console.log(new String("grig"));
+console.log(typeof new String("grig"));
+
+console.log(typeof new String("grig").slice(1));
