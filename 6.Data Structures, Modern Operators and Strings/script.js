@@ -770,49 +770,228 @@ const restaurant = {
 //   console.log(`${half} ${key}: ${value}`);
 // }
 
-//------------------------Strings-------------------------
-//Stings are primitives and are immutable
-const airline = "TAP Air Portugal";
-const plane = "A320";
-console.log(plane[0]);
-console.log(plane[1]);
-console.log(plane[2]);
-console.log("B737"[0]);
+// //------------------------Strings-------------------------
+// //Stings are primitives and are immutable
+// const airline = "TAP Air Portugal";
+// const plane = "A320";
+// console.log(plane[0]);
+// console.log(plane[1]);
+// console.log(plane[2]);
+// console.log("B737"[0]);
 
-console.log(airline.length);
-console.log("B747".length);
+// console.log(airline.length);
+// console.log("B747".length);
 
-//at what position a character is in the sting
-console.log(airline.indexOf("r"));
-console.log(airline.lastIndexOf("r"));
-//case sensitive
-console.log(airline.indexOf("Portugal"));
+// //at what position a character is in the sting
+// console.log(airline.indexOf("r"));
+// console.log(airline.lastIndexOf("r"));
+// //case sensitive
+// console.log(airline.indexOf("Portugal"));
 
-//extraction start at position ...
-//don`t change the initial string and return a new string
-console.log(airline.slice(4));
-console.log(airline.slice(4, 6)); //2 characters extracted
+// //extraction start at position ...
+// //don`t change the initial string and return a new string
+// console.log(airline.slice(4));
+// console.log(airline.slice(4, 6)); //2 characters extracted
 
-//extract without hard code
-console.log(airline.slice(0, airline.indexOf(" ")));
-console.log(airline.slice(airline.lastIndexOf(" ") + 1));
+// //extract without hard code
+// console.log(airline.slice(0, airline.indexOf(" ")));
+// console.log(airline.slice(airline.lastIndexOf(" ") + 1));
 
-console.log(airline.slice(-2));
-console.log(airline.slice(1, -1));
+// console.log(airline.slice(-2));
+// console.log(airline.slice(1, -1));
 
-const checkMiddleSeat = function (seat) {
-  //B and E are middle seats
-  const s = seat.slice(-1);
-  if (s === "B" || s === "E") {
-    console.log("you got the middle seat :D");
-  } else console.log("You got lucky");
-};
-checkMiddleSeat("11B");
-checkMiddleSeat("23C");
-checkMiddleSeat("3E");
+// const checkMiddleSeat = function (seat) {
+//   //B and E are middle seats
+//   const s = seat.slice(-1);
+//   if (s === "B" || s === "E") {
+//     console.log("you got the middle seat :D");
+//   } else console.log("You got lucky");
+// };
+// checkMiddleSeat("11B");
+// checkMiddleSeat("23C");
+// checkMiddleSeat("3E");
 
-//Boxing. Javascript is smart and takes the primitive string and converts behind the scene to an object string so we can call the methods. After calling the method it returns a primitive string again(unboxing)
-console.log(new String("grig"));
-console.log(typeof new String("grig"));
+// //Boxing. Javascript is smart and takes the primitive string and converts behind the scene to an object string so we can call the methods. After calling the method it returns a primitive string again(unboxing)
+// console.log(new String("grig"));
+// console.log(typeof new String("grig"));
 
-console.log(typeof new String("grig").slice(1));
+// console.log(typeof new String("grig").slice(1));
+
+// console.log(airline.toLowerCase());
+// console.log(airline.toUpperCase());
+
+// //Fix capitalization in name
+// const passenger = "gRiG";
+// const passengerLower = passenger.toLowerCase();
+// const passengerCorrect =
+//   passengerLower[0].toUpperCase() + passengerLower.slice(1);
+// console.log(passengerCorrect);
+
+// // Check/ Comparing emails
+// const email = "grig@yahoo.com";
+// const loginEmail = "Grig@yahoO.Com \n";
+
+// // const lowerEmail = loginEmail.toLowerCase();
+// // const trimmedEmail = lowerEmail.trim();
+// // console.log(trimmedEmail);
+
+// //replace faster
+// const normalizedEmail = loginEmail.toLowerCase().trim();
+// console.log(normalizedEmail);
+
+// console.log(email === normalizedEmail);
+
+// //Replace parts of strings
+// const priceGB = "288,97$";
+// const priceUS = priceGB.replace("$", "&").replace(",", ".");
+// console.log(priceUS);
+
+// //replace words into a string
+// const announcement = `All passengers come to barding door 23. Boarding door 23`;
+// console.log(announcement.replace("door", "gate"));
+// console.log(announcement.replaceAll("door", "gate"));
+
+// //regular expression
+// //string global
+// console.log(announcement.replace(/door/g, "gate"));
+
+// //Methods that return Booleans
+// const plane1 = "Airbus A320neo";
+// console.log(plane1.includes("A320"));
+// console.log(plane1.includes("A3209"));
+// console.log(plane1.startsWith("neo"));
+// console.log(plane1.startsWith("A32"));
+
+// if (plane1.startsWith("Airbus") && plane1.endsWith("neo")) {
+//   console.log("Part of the NEW Airbus family");
+// }
+
+//Practice exercise
+// const checkBaggage = function (items) {
+//   const baggage = items.toLowerCase();
+//   if (baggage.includes("knife") || baggage.includes("gun")) {
+//     console.log("You are not allowed on board");
+//   } else {
+//     console.log("Welcome aboard");
+//   }
+// };
+// checkBaggage("I have a laptop, some FooD and a pocket Knife");
+// checkBaggage("Socks and camera");
+// checkBaggage("Got some snacks and a gun for protection");
+
+// //--------------Part 3
+// //Split with join
+// console.log("a+very+nice+string".split("+"));
+// console.log("Grigore Nath".split(" "));
+
+// const [firstName, lastName] = "Grigore Nath".split(" ");
+
+// //adding spaces/others with join
+// const newName = ["Mr.", firstName, lastName.toUpperCase()].join(" ");
+// console.log(newName);
+
+// const capitalizeName = function (name) {
+//   const names = name.split(" ");
+//   const namesUpper = [];
+//   for (const word of names) {
+//     // namesUpper.push(word[0].toUpperCase() + word.slice(1));
+//     namesUpper.push(word.replace(word[0], word[0].toUpperCase()));
+//   }
+//   console.log(namesUpper.join(" "));
+// };
+// capitalizeName("jessica ann smith davis");
+// capitalizeName("grigore nath");
+
+// //Padding of strings
+// //stings to have the same length
+// const message = "Go to gate 23!";
+// console.log(message.padStart(25, "+"));
+// console.log(message.padStart(25, "+").padEnd(35, "+"));
+// console.log("Grig".padStart(25, "+").padEnd(35, "+"));
+
+// const maskCreditCard = function (number) {
+//   // const str = String(number);
+//   const str = number + "";
+//   const last = str.slice(-4);
+//   return last.padStart(str.length, "*");
+// };
+
+// console.log(maskCreditCard(3434223423423432423));
+// console.log(maskCreditCard("12123432432423423999"));
+
+// //Repeat method
+// const message2 = "Bad weather... All Departures Delayed... ";
+
+// console.log(message2.repeat(5));
+
+// const planesInLine = function (n) {
+//   console.log(`There are ${n} planes in line ${"plane ".repeat(n)}`);
+// };
+
+// planesInLine(5);
+// planesInLine(3);
+// planesInLine(13);
+
+//--------------------------------Strings challenge
+// text data
+// underscore_case
+// first_name
+// Some_Variable
+// calculate_AGE
+// delayed_departure
+
+/*
+underscore_case
+first_name
+Some_Variable
+calculate_AGE
+delayed_departure
+*/
+document.body.append(document.createElement("textarea"));
+document.body.append(document.createElement("button"));
+let text = "";
+
+//----------------------------MY implementation------------------------------------------
+// document.querySelector("button").addEventListener("click", function () {
+//   text = document.querySelector("textarea").value;
+
+//   text = text.toLowerCase().trim();
+//   const lineSplitter = text.split("\n");
+//   console.log(lineSplitter);
+//   let star = 0;
+//   for (let longWord of lineSplitter) {
+//     star++;
+//     let [firstWord, secondWord] = longWord.split("_");
+//     secondWord = secondWord.replace(secondWord[0], secondWord[0].toUpperCase());
+//     //secondWord = secondWord[0].toUpperCase + secondWord.slice(1);
+//     let finishedWord = firstWord + secondWord;
+//     // console.log(firstWord + secondWord);
+//     // console.log(`${firstWord}${secondWord}`);
+
+//     console.log(`${finishedWord.padEnd(35, " ")}${"*".repeat(star)}`);
+//   }
+
+//   // const finishedLine = transformLine.join(transformLine[0]);
+
+//   // console.log(text);
+// });
+
+//original implementation
+document.querySelector("button").addEventListener("click", function () {
+  text = document.querySelector("textarea").value;
+  const rows = text.split("\n");
+  console.log(rows);
+
+  // for (const row of rows) {
+  //if we want to get the indexes we need to deconstruct the entries
+  for (const [i, row] of rows.entries()) {
+    const [first, second] = row.toLowerCase().trim().split("_");
+    // console.log(row, first, second);
+    const output = `${first}${second.replace(
+      second[0],
+      second[0].toUpperCase()
+    )}`;
+
+    console.log(`${output.padEnd(20, " ")}${"*".repeat(i + 1)}`);
+  }
+});
