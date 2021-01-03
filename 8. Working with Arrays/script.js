@@ -171,12 +171,14 @@ const inputClosePin = document.querySelector(".form__input--pin");
 
 // PROJECT: "BANKLST" APP
 //add the data into the function instead of global
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   //remove the before content
   containerMovements.innerHTML = "";
-  //.textContent= 0;
 
-  movements.forEach(function (mov, i) {
+  //make a copy in a chain slice()
+  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  movs.forEach(function (mov, i) {
     const type = mov > 0 ? "deposit" : "withdrawal";
 
     //create a string of HTML and insert in our index
@@ -292,6 +294,20 @@ btnLogin.addEventListener("click", function (e) {
   }
 });
 
+btnLoan.addEventListener("click", function (e) {
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value);
+  if (amount > 0 && currentAccount.movements.some((mov) => mov >= amount * 0.1)) {
+    // Add movement
+    currentAccount.movements.push(amount);
+
+    //UpdateUI
+    updateUI(currentAccount);
+  }
+
+  inputLoanAmount.value = "";
+});
+
 btnTransfer.addEventListener("click", function (e) {
   e.preventDefault();
   const amount = Number(inputTransferAmount.value);
@@ -332,6 +348,14 @@ btnClose.addEventListener("click", function (e) {
   inputCloseUsername.value = inputClosePin.value = "";
   inputClosePin.blur();
   inputCloseUsername.blur();
+});
+
+let sorted = false;
+btnSort.addEventListener("click", function (e) {
+  //don't let the browser page when introducing data to refresh
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
 
 //---------------------------------------------Challenge on arrays
@@ -604,3 +628,137 @@ GOOD LUCK 😀
 //----------------------------------------FINDINDEX method--in ES6
 //return the index where the condition is met
 // const index = accounts.findIndex((acc) => acc.username === currentAccount.username);
+
+//-----------------------------SOME and EVERY methods
+// console.log(movements);
+// //EQUALITY
+// console.log(movements.includes(-130));
+
+// //SOME is like include, but we can compute an complex condition with the help of an callback function
+// //CONDITION
+// // const anyDeposits = movements.some((mov) => mov > 5000);
+// const anyDeposits = movements.some((mov) => mov > 1500);
+// // const anyDeposits = movements.some((mov) => mov === -1500);
+// console.log(anyDeposits);
+
+// //EVERY- return true if all the elements pass the condition, if not it returns false
+
+// console.log(movements.every((mov) => mov > 0));
+// //all mov>0
+// console.log(account4.movements.every((mov) => mov > 0));
+
+// // Separate callback
+// // const deposit = (mov) => mov > 0;
+// const deposit = (mov) => mov < 0;
+// console.log(movements.every(deposit));
+// console.log(movements.some(deposit));
+// console.log(movements.filter(deposit));
+
+// //-------------------------------FLAT and FLATMAP methods(2019)
+// const arr = [[1, 2, 3], [4, 5, 6], 7, 8];
+// //only one level deep
+// //flat method
+// console.log(arr.flat());
+
+// const arrDeep = [[[1, 2], 3], [4, [5, 6]], 7, 8];
+// console.log(arrDeep.flat(1));
+// console.log(arrDeep.flat(2));
+
+// const accountMovements = accounts.map((acc) => acc.movements);
+// console.log(accountMovements);
+
+// const allMovements = accountMovements.flat();
+// console.log(allMovements);
+
+// const overalBalance = allMovements.reduce((acc, mov) => acc + mov, 0);
+// console.log(overalBalance);
+
+// const overalBalance2 = accounts
+//   .map((acc) => acc.movements)
+//   .flat()
+//   .reduce((acc, mov) => acc + mov, 0);
+// console.log(overalBalance2);
+
+// //---------flatMap method
+// //only 1 level deep
+// const overalBalanceMap = accounts.flatMap((acc) => acc.movements).reduce((acc, mov) => acc + mov, 0);
+// console.log(overalBalanceMap);
+// // let arrFlat = [1, 2, 3, 4];
+
+// // arrFlat.flatMap((x) => [x, x * 2]);
+// // console.log(arrFlat);
+
+// //------------------------------------SORTING Arrays
+// //The sort sort everything based on string
+// const owners = ["Grig", "Zach", "Adam", "Martha"];
+// //This mutate the array
+// console.log(owners.sort());
+// console.log(owners);
+
+// //Numbers
+// console.log(movements);
+// //doesn't word
+// // console.log(movements.sort());
+
+// //return < 0, A,B(keep order)
+// //return > 0 B,A(switch order)
+// //ascending order
+// // movements.sort((a, b) => {
+// //   if (a > b) return 1;
+// //   if (a < b) return -1;
+// // });
+// movements.sort((a, b) => a - b);
+
+// //descending order
+// // movements.sort((a, b) => {
+// //   if (a > b) return -1;
+// //   if (a < b) return 1;
+// // });
+// movements.sort((a, b) => b - a);
+// console.log(movements);
+
+//-------------------------------More ways of creating and filling arrays
+//Creating arrays programmatically
+// console.log([1, 2, 34, 5, 6, 7]);
+const arr = [1, 2, 34, 5, 6, 7];
+console.log(new Array(1, 23, 4, 5, 6, 7, 8));
+
+//Empty array + fill method
+const x = new Array(7);
+console.log(x);
+// console.log(x.map(() => 5));
+
+//--------Fill method
+// x.fill(1);
+// x.fill(1, 3);
+x.fill(1, 3, -1);
+x.fill(1, 3, 6);
+console.log(x);
+
+arr.fill(23, 4, 6);
+console.log(arr);
+
+//Array.from
+const y = Array.from({ length: 7 }, () => 1);
+console.log(y);
+
+//is like map method on an empty array
+// const z = Array.from({ length: 7 }, (cur, i) => i + 1);
+const z = Array.from({ length: 7 }, (_, i) => i + 1);
+console.log(z);
+
+//1000 random array
+const random = Array.from({ length: 100 }, (_, i) => (i = Math.trunc(Math.random() * 6)));
+console.log(random);
+
+labelBalance.addEventListener("click", function () {
+  //need to transform an array of nodes to an array
+  //it wouldn't work if we would selected the nodes only
+  //we can map directly here
+  const movementsUI = Array.from(document.querySelectorAll(".movements__value"), (el) => Number(el.textContent.replace("€", "")));
+  console.log(movementsUI);
+  // console.log(movementsUI.map((el) => Number(el.textContent.replace("€", ""))));
+  //this also transform the node list(array like list) into an array
+  const movementsUI2 = [...document.querySelectorAll(".movements__value")];
+  console.log(movementsUI2);
+});
