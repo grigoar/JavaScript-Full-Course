@@ -10,6 +10,7 @@ const nav = document.querySelector("nav");
 const tabs = document.querySelectorAll(".operations__tab");
 const tabsContainer = document.querySelector(".operations__tab-container");
 const tabsContent = document.querySelectorAll(".operations__content");
+const h1Title = document.querySelector("h1");
 ///////////////////////////////////////
 // Modal window
 
@@ -139,7 +140,7 @@ tabsContainer.addEventListener("click", function (e) {
 // const handleHover = function (e, opacity) {
 //we can only have one value or we need to implement the function
 const handleHover = function (e) {
-  console.log(this, e.currentTarget);
+  // console.log(this, e.currentTarget);
   //here we don't have more elements inside and we don't need closest);
   if (e.target.classList.contains("nav__link")) {
     const link = e.target;
@@ -175,15 +176,188 @@ nav.addEventListener("mouseout", handleHover.bind(1));
 //Sticky navigation
 //the scroll part is tied up  by the window global object
 //to get the coordonates of the section 1
-const initialCoords = section1.getBoundingClientRect();
-console.log(initialCoords);
+// const initialCoords = section1.getBoundingClientRect();
+// console.log(initialCoords);
 
-//this is pretty bad for performance
-window.addEventListener("scroll", function (e) {
-  console.log(window.scrollY);
-  if (window.scrollY > initialCoords.top) nav.classList.add("sticky");
+// //this is pretty bad for performance
+// window.addEventListener("scroll", function (e) {
+//   // console.log(window.scrollY);
+//   if (window.scrollY > initialCoords.top) nav.classList.add("sticky");
+//   else nav.classList.remove("sticky");
+// });
+
+//------------------A better way for smooth scrolling: the intersection observer API
+//How the intersetion observer API works?
+// 117.	Intersection observer API(for smooth scrolling) is created using an object IntersectionObserver(callback,options) and than the object call the method to observe an element. Options contains the root(element we want to intersect, if is null it means we observe how the element intersect with the entire viewport), threshold(0…1=>0 means 0% of the target, and 1 means 100% of the target); threshold: at which percentage the function callback is intersecting the root element at a specific threshold-> is represented by intersectionRatio ;and the rootMargin(if we want to add some margin to the intersection -> in pixels). The callback function have 2 parameters : entries(the object IntersectionObserverEntry)->this has multiple properties(isIntersecting ,intersectionRatio etc.) , and the observer object(IntersectionObserver));
+
+// const obsCallback = function (entries, observer) {
+//   entries.forEach((entry) => {
+//     console.log(entry);
+//   });
+// };
+
+// const obsOptions = {
+//element we want to intersect, if is null it means we observe how the element intersect with the entire viewport
+//   root: null,
+//0…1=>0 means 0% of the target, and 1 means 100% of the target
+//   // threshold: 0.1,
+//   threshold: [0, 0.2],
+// };
+
+// const observer = new IntersectionObserver(obsCallback, obsOptions);
+// observer.observe(section1);
+
+const header = document.querySelector(".header");
+const navHeight = nav.getBoundingClientRect().height;
+// console.log(navHeight);
+
+const stickyNav = function (entries) {
+  // const entry = entries[0];
+  //destructuring
+  const [entry] = entries;
+  // console.log(entry);
+  if (!entry.isIntersecting) nav.classList.add("sticky");
   else nav.classList.remove("sticky");
+};
+
+// const headerObserver = new IntersectionObserver(stickyNav, { root: null, threshold: 0, rootMargin: "-90px" });
+const headerObserver = new IntersectionObserver(stickyNav, { root: null, threshold: 0.2, rootMargin: `-${navHeight}px` });
+headerObserver.observe(header);
+
+//---------------------------Reveal sections
+//don't put the section hidden manually in the html, maybe some users disable javascript and the sections will not be revealed anymore
+const allSections = document.querySelectorAll(".section");
+
+const revealSection = function (entries, observer) {
+  const [entry] = entries;
+  // console.log(entry);
+  if (!entry.isIntersecting) return;
+
+  entry.target.classList.remove("section--hidden");
+  observer.unobserve(entry.target);
+};
+const sectionObserver = new IntersectionObserver(revealSection, { root: null, threshold: 0.15 });
+allSections.forEach(function (section) {
+  sectionObserver.observe(section);
+  //remove temporary for annoying me
+  // section.classList.add("section--hidden");
 });
+
+//-------------------Lazy Loading Images
+//To Improve performance
+
+//select the imaged that have the property data-src
+const imgTargets = document.querySelectorAll("img[data-src]");
+
+const loadImg = function (entries, observer) {
+  const [entry] = entries;
+  // console.log(entry);
+
+  if (!entry.isIntersecting) return;
+
+  //Replace src with data-src
+  entry.target.src = entry.target.dataset.src;
+  // entry.target.classList.remove("lazy-img");
+  //removing the filter only when the network catch up with the loading of the image
+  entry.target.addEventListener("load", function () {
+    entry.target.classList.remove("lazy-img");
+  });
+
+  //when we finish with the loading the object we not longer observe them
+  observer.unobserve(entry.target);
+};
+
+const imgObserver = new IntersectionObserver(loadImg, { root: null, threshold: 0, rootMargin: "200px" });
+
+imgTargets.forEach((img) => imgObserver.observe(img));
+
+//-----------------------------Building an slider component
+const slider = function () {
+  const slides = document.querySelectorAll(".slide");
+  // console.log(slides);
+  const btnLeft = document.querySelector(".slider__btn--left");
+  const btnRight = document.querySelector(".slider__btn--right");
+  const dotContainer = document.querySelector(".dots");
+  // console.log(btnLeft);
+
+  let curSlide = 0;
+  const maxSlide = slides.length;
+  //put all the function into another function
+  //do not polute the code
+
+  //Functions
+  const createDots = function () {
+    slides.forEach(function (_, i) {
+      dotContainer.insertAdjacentHTML("beforeend", `<button class="dots__dot" data-slide="${i}"></button>`);
+    });
+  };
+
+  const activateDot = function (slide) {
+    document.querySelectorAll(".dots__dot").forEach((dot) => dot.classList.remove("dots__dot--active"));
+
+    document.querySelector(`.dots__dot[data-slide="${slide}"]`).classList.add("dots__dot--active");
+  };
+
+  // const slider = document.querySelector(".slider");
+  // slider.style.transform = "scale(0.3) translateX(-800px)";
+  // slider.style.overflow = "visible";
+  // slides.forEach((s, i) => (s.style.transform = `translateX(${100 * i}%)`));
+  //0% , 100%, 200%, 300%
+
+  const goToSlide = function (slide) {
+    slides.forEach((s, i) => (s.style.transform = `translateX(${100 * (i - slide)}%)`));
+  };
+
+  const nextSlide = function () {
+    if (curSlide === maxSlide - 1) {
+      curSlide = 0;
+    } else {
+      curSlide++;
+    }
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  const prevSlide = function () {
+    if (curSlide === 0) {
+      curSlide = maxSlide - 1;
+    } else {
+      curSlide--;
+    }
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  //functions
+  const init = function () {
+    createDots();
+    goToSlide(0);
+    activateDot(0);
+  };
+  init();
+
+  //Event handlers
+  btnRight.addEventListener("click", nextSlide);
+  btnLeft.addEventListener("click", prevSlide);
+  //-100% , 0%, 100%, 200%
+
+  //-----------------------Building the slider PART 2
+  document.addEventListener("keydown", function (e) {
+    console.log(e);
+    if (e.key === "ArrowLeft") prevSlide();
+    e.key === "ArrowRight" && nextSlide();
+  });
+
+  dotContainer.addEventListener("click", function (e) {
+    if (e.target.classList.contains("dots__dot")) {
+      // const slide = e.target.dataset.slide;
+      const { slide } = e.target.dataset;
+      goToSlide(slide);
+      activateDot(slide);
+    }
+  });
+};
+slider();
 
 //----------------------------How DOM really works behind the scene?
 //DOM : Allows us to make JavaScript interact with the browser; We can write JavaScript to create, modify and delete HTML elements, set styles, classes and attributes, and listen and respond to events; Dom tree is generated from an HTML document, which we can then interact with
@@ -447,3 +621,35 @@ window.addEventListener("scroll", function (e) {
 //----------------------------Building a Tabbled Component
 //-----------------Passing arguments to event handlers
 //-----------------------Implementing a sticky navigation: The scrolling event
+//------------A better way of implementing Smooth scrolling:
+//------------------A better way: the intersection observer API
+
+//-----------------------------Revealing elements on scroll
+//------------------------------Building a slider component
+//------------------------------LifeCycle DOM events
+
+//execute after the dom is loaded
+//if the script is at the bottom is fine
+document.addEventListener("DOMContentLoaded", function (e) {
+  console.log("HTML parsed and DOM tree built!", e);
+});
+
+//jquery javascript need ready like domcontentloaded
+// document.ready;
+
+//this is fired when all the images and all the external libraries are loaded
+window.addEventListener("load", function (e) {
+  console.log("Page fully loaded", e);
+});
+
+//here we can ask if the user really want to leave the page
+window.addEventListener("beforeunload", function (e) {
+  e.preventDefault();
+  console.log("here we can ask if the user really want to leave the page", e);
+  e.returnValue = "message";
+});
+
+//-----------------------Efficient script loading: defer and async
+//where we should load place the javascript in the html?
+//best way using defer an maybe async in the head, or at the body end with regular form
+// 118.	Regular vs. Async vs. Defer: Regular at the end of body: - Scripts are fetched and executed after the HTML is completely parsed; - Use if you need to support old browsers; Async in Head: - Scripts are fetched asynchronously and executed immediately; - Usually the DOMContentLoaded event waits for all scripts to execute, except for async scripts. So, DOMContentLoaded does not wait for an async script; -Scripts not guaranteed to execute in order; -Use for 3rd-party cripts where order doesn’t matter (ex Google Analytics); DEFER in head: -Scripts are fetched asynchronously and executed after the HTML is completely parsed; DOMContentLoaded event fires after defer script is executed; - Scripts are executed in order; - This is overall the best solution! Use when order matters (including a library)
