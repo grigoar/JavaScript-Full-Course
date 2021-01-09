@@ -76,7 +76,7 @@ const renderCountry = function (data, className = "") {
   `;
 
   countriesContainer.insertAdjacentHTML("beforeend", html);
-  //   countriesContainer.style.opacity = 1;
+  countriesContainer.style.opacity = 1;
 };
 
 // const getCountryDataAndNeighbour = function (country) {
@@ -447,15 +447,436 @@ GOOD LUCK 😀
 //------------------------------------Asynchronous behind the scenes: The Event Loop
 
 //----------------------------------The Event Loop in Practice
-console.log("Test start");
-setTimeout(() => console.log("0 sec timer"), 0);
+// console.log("Test start");
+// setTimeout(() => console.log("0 sec timer"), 0);
 
-Promise.resolve(`Resolved promise 1`).then((res) => console.log(res));
+// Promise.resolve(`Resolved promise 1`).then((res) => console.log(res));
 
-//this takes a lot of time ... promise is put in the microtask and after that the timer is put
-//timers are not totally safe to use
-Promise.resolve("Resolved promised 2").then((res) => {
-  for (let i = 0; i < 10000; i++) console.log(res);
-});
+// //this takes a lot of time ... promise is put in the microtask and after that the timer is put
+// //timers are not totally safe to use
+// // Promise.resolve("Resolved promised 2").then((res) => {
+// //   for (let i = 0; i < 10000; i++) console.log(res);
+// // });
 
-console.log("Test end");
+// console.log("Test end");
+
+//-------------------------------------Building a simple promise
+//the parameter is an executor
+// const lotteryPromise = new Promise(function (resolve, reject) {
+//   console.log("Lottery draw is happening 🔮");
+//   setTimeout(function () {
+//     if (Math.random() >= 0.5) {
+//       //successful we call resolve->fulfilled promised
+//       resolve("You win🎉");
+//     } else {
+//       reject(new Error("You lost your money 👀"));
+//     }
+//   }, 2000);
+// });
+
+// // Consuming promisees
+// // lotteryPromise.then(
+// //   (resolved) => console.log(resolved),
+// //   (err) => console.error(err)
+// // );
+
+// lotteryPromise.then((resolved) => console.log(resolved)).catch((err) => console.error(err));
+
+// //-----promisifying setTimeout- is transforming asynchronous calling based to promises based
+// const wait = function (seconds) {
+//   //create and return a promise
+//   //we don't resolve the reject
+//   //we can pass an empty resolve
+//   return new Promise(function (resolve) {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
+
+// // wait(2)
+// //   .then(() => {
+// //     console.log("I waited for 2 seconds");
+// //     return wait(1);
+// //   })
+// //   .then(() => console.log("I waited for 1 second"));
+
+// // setTimeout(() => {
+// //   console.log("1 second passed");
+// //   setTimeout(() => {
+// //     console.log("2 second passed");
+// //     setTimeout(() => {
+// //       console.log("3 second passed");
+// //       setTimeout(() => {
+// //         console.log("4 second passed");
+// //       }, 1000);
+// //     }, 1000);
+// //   }, 1000);
+// // }, 1000);
+
+// wait(2)
+//   .then(() => {
+//     console.log("1 second passed");
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log("2 second passed");
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log("3 second passed");
+//     return wait(1);
+//   })
+//   .then(() => {
+//     console.log("4 second passed");
+//     return wait(1);
+//   })
+//   .then(() => console.log("I waited for 5 second"));
+
+// //create a rejected promise immediately
+// Promise.resolve("resolved promise").then((x) => console.log(x));
+// // Promise.reject("rejected promise")
+// Promise.reject(new Error("problem"))
+//   // .then((x) => console.log(x))
+//   .catch((x) => console.error(x));
+
+//---------------------------Promisifying the geolocation API
+
+// console.log("Getting position");
+
+// const getPosition = function () {
+//   return new Promise(function (resolve, reject) {
+//     // navigator.geolocation.getCurrentPosition(
+//     //   //when fulfilled we set the resolve with the position object
+//     //   (position) => resolve(position),
+//     //   (err) => reject(err)
+//     // );
+//     navigator.geolocation.getCurrentPosition(resolve, reject);
+//   });
+// };
+// getPosition()
+//   .then((pos) => console.log(pos))
+//   .catch((err) => console.log(err));
+
+// const whereAmI = function (lat, lng) {
+//   getPosition()
+//     .then((pos) => {
+//       // console.log(pos.coords);
+//       const { latitude: lat, longitude: lng } = pos.coords;
+//       return fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+//     })
+//     .then((response) => {
+//       //   console.log(response);
+
+//       if (!response.ok && response.status === 403)
+//         throw new Error(
+//           `Request not handled by the fetch. There are too many requests per second! StatusText: ${response.statusText}.`
+//         );
+//       return response.json();
+//     })
+//     .then((data) => {
+//       console.log(data);
+//       console.log(`You are in ${data.city}, ${data.country}!`);
+//       //   getCountryData(data.country.toLowerCase());
+//       return fetch(`https://restcountries.eu/rest/v2/name/${data.country}`);
+//     })
+//     .then((response) => {
+//       if (!response.ok) throw new Error(`Country not found (${response.status})`);
+//       return response.json();
+//     })
+//     .then((data) => {
+//       console.log("The country searched: ", data);
+//       renderCountry(data[0]);
+//       const neighbour = data[0].borders[0];
+//       if (!neighbour) throw new Error("No neighbour found!");
+//       return fetch(`https://restcountries.eu/rest/v2/alpha/${neighbour}`);
+//     })
+//     .then((response) => response.json())
+//     .then((data) => {
+//       console.log("Neighbour", data);
+//       renderCountry(data, "neighbour");
+//     })
+//     .catch((err) => {
+//       console.error(`Something went wrong! 🎇🎇🎇 ${err.message}.`);
+//     })
+//     .finally(() => (countriesContainer.style.opacity = 1));
+// };
+
+// btn.addEventListener("click", whereAmI);
+
+///////////////////////////////////////
+// Coding Challenge #2
+
+/* 
+Build the image loading functionality that I just showed you on the screen.
+
+Tasks are not super-descriptive this time, so that you can figure out some stuff on your own. Pretend you're working on your own 😉
+
+PART 1
+1. Create a function 'createImage' which receives imgPath as an input. This function returns a promise which creates a new image (use document.createElement('img')) and sets the .src attribute to the provided image path. When the image is done loading, append it to the DOM element with the 'images' class, and resolve the promise. The fulfilled value should be the image element itself. In case there is an error loading the image ('error' event), reject the promise.
+
+If this part is too tricky for you, just watch the first part of the solution.
+
+PART 2
+2. Comsume the promise using .then and also add an error handler;
+3. After the image has loaded, pause execution for 2 seconds using the wait function we created earlier;
+4. After the 2 seconds have passed, hide the current image (set display to 'none'), and load a second image (HINT: Use the image element returned by the createImage promise to hide the current image. You will need a global variable for that 😉);
+5. After the second image has loaded, pause execution for 2 seconds again;
+6. After the 2 seconds have passed, hide the current image.
+
+TEST DATA: Images in the img folder. Test the error handler by passing a wrong image path. Set the network speed to 'Fast 3G' in the dev tools Network tab, otherwise images load too fast.
+
+GOOD LUCK 😀
+*/
+// let image;
+// const images = document.querySelector(".images");
+// // console.log(images);
+// const createImage = function (imgPath) {
+//   return new Promise(function (resolve, reject) {
+//     const image = document.createElement("img");
+//     image.src = imgPath;
+//     image.addEventListener("load", function () {
+//       images.insertAdjacentElement("beforeend", image);
+//       resolve(image);
+//     });
+//     image.addEventListener("error", function () {
+//       reject(new Error("The image didn't load 😥. Try again"));
+//     });
+//   });
+// };
+
+// const wait = function (seconds) {
+//   // setTimeout(resolve,seconds*1000)
+//   return new Promise(function (resolve) {
+//     console.log(`Passed ${seconds} seconds`);
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
+
+// createImage("img/img-1.jpg").then((res) => {
+//   console.log("The image element: ", res);
+//   wait(2)
+//     .then(() => {
+//       console.log("Execution paused for 2 seconds");
+//       res.style.display = "none";
+//       return createImage("img/img-2.jpg");
+//     })
+//     .then((res) => {
+//       console.log("The image element: ", res);
+//       wait(2).then(() => {
+//         console.log("Execution paused for 2 seconds");
+//         res.style.display = "none";
+//         return createImage("img/img-2.jpg");
+//       });
+//     });
+// });
+// .catch((err) => console.error(`Something went wrong. ${err.message}`));
+
+// let currentImage;
+
+// createImage("img/img-1.jpg")
+//   .then((img) => {
+//     console.log(img);
+//     currentImage = img;
+//     return wait(2);
+//   })
+//   .then(() => {
+//    console.log("Showned image for 2 sec")
+//   currentImage.style.display = "none";
+//   wait(2);
+//   })
+//   .then(() => {
+//console.log("Passed 2 seconds of emptiness ")
+//     currentImage.style.display = "none";
+//     return createImage("img/img-2.jpg");
+//   })
+//   .then((img) => {
+//     console.log(img);
+//     currentImage = img;
+//     return wait(2);
+//   })
+//   .then(() => {
+//     console.log("passed another 2 sec");
+//     currentImage.style.display = "none";
+//   })
+//   .catch((err) => console.error(`Something went wrong. ${err.message}`));
+
+//------------better solution
+
+// const wait = function (seconds) {
+//   return new Promise(function (resolve) {
+//     setTimeout(resolve, seconds * 1000);
+//   });
+// };
+
+// const imgContainer = document.querySelector(".images");
+
+// const createImage = function (imgPath) {
+//   return new Promise(function (resolve, reject) {
+//     const img = document.createElement("img");
+//     img.src = imgPath;
+
+//     img.addEventListener("load", function () {
+//       imgContainer.append(img);
+//       resolve(img);
+//     });
+
+//     img.addEventListener("error", function () {
+//       reject(new Error("Image not found"));
+//     });
+//   });
+// };
+
+// let currentImg;
+// createImage("img/img-1.jpg")
+//   .then((img) => {
+//     currentImg = img;
+//     console.log("Image 1 loaded");
+//     return wait(4);
+//   })
+//   .then(() => {
+//     console.log("4 seconds passed");
+//     currentImg.style.display = "none";
+//     return wait(4);
+//   })
+//   .then(() => {
+//     console.log("4 seconds of empty passed");
+//     // currentImg.style.display = "none";
+//     return createImage("img/img-2.jpg");
+//   })
+//   .then((img) => {
+//     currentImg = img;
+//     console.log("Image 2 loaded");
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = "none";
+//   })
+//   .catch((err) => console.error(err));
+
+//-----------------------------Consuming promises with async/await
+
+const getPosition = function () {
+  return new Promise(function (resolve, reject) {
+    navigator.geolocation.getCurrentPosition(resolve, reject);
+  });
+};
+
+//async starting a background execution, when encountering the await the execution is blocked, but is not a problem because the async function is asynchronous
+//we are using the await to stop the code, and when the promise is return the object is assigned to something
+// const whereAmI = async function () {
+//   //Geolocation
+//   const pos = await getPosition();
+//   const { latitude: lat, longitude: lng } = pos.coords;
+
+//   //Reverse geocoding
+//   const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+//   const dataGeo = await resGeo.json();
+//   console.log(dataGeo);
+
+//   //Country data
+//   //stopping execution when meeting await
+//   const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
+//   // fetch(`https://restcountries.eu/rest/v2/name/${country}`).then((res) => console.log(res));
+//   const data = await res.json();
+//   console.log(data);
+//   renderCountry(data[0]);
+// };
+// whereAmI();
+// console.log("First");
+
+//--------------------------------Error handling with try...catch for async/await
+//catching error for async functions
+// try {
+//   let y = 1;
+//   const x = 2;
+//   // y = 3;
+//   x = 3;
+// } catch (err) {
+//   console.error(err.message);
+// }
+
+// const whereAmI = async function () {
+//   try {
+//     //Geolocation
+//     const pos = await getPosition();
+//     const { latitude: lat, longitude: lng } = pos.coords;
+
+//     //Reverse geocoding
+//     const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+
+//     if (!resGeo.ok) throw new Error("Problem getting location data");
+
+//     const dataGeo = await resGeo.json();
+//     // console.log(dataGeo);
+
+//     //Country data
+//     //stopping execution when meeting await
+//     const res = await fetch(`https://restcountries.eu/rest/v2/name/${dataGeo.country}`);
+//     // fetch(`https://restcountries.eu/rest/v2/name/${country}`).then((res) => console.log(res));
+//     if (!res.ok) throw new Error("Problem getting country");
+//     const data = await res.json();
+//     // console.log(data);
+//     renderCountry(data[0]);
+
+//     return `You are in ${dataGeo.city}, ${dataGeo.country}`;
+//   } catch (err) {
+//     console.error(`${err} ✨`);
+//     renderError(`Something went wrong 🧨 ${err.message}`);
+
+//     //Reject promise returned from async function
+//     //we rethtrow the error so we can catch the error when it propagate down
+//     throw err;
+//   }
+// };
+// console.log(`1:Will get location`);
+// const city = whereAmI();//at this point the js doesn't know about the string to return and it returned promise, and the fulfill is the returning string
+// whereAmI()
+//   .then((city) => console.log(`2:${city} fulfilled promise`))
+//   .catch((err) => console.error(`2:${err.message} 🎆`))
+//   .finally(() => console.log("3.Finished getting location")); //the resolve value of the promise
+// console.log(city);
+
+//---------------------------Returning values from async functions
+// (async function () {
+//   try {
+//     const city = await whereAmI();
+//     console.log(`2:${city} fulfilled promise`);
+//   } catch (err) {
+//     console.error(`2:${err.message} 🎆`);
+//   }
+//   console.log("3.Finished getting location");
+// })();
+
+//-------------------Running promises in parallel
+
+//Running all the promises functions in parallel using Promise.all
+//If 1 promies is rejected than it will short circuit the function Promise.all
+//use for loading multiple async function in parallel(much more faster)
+
+const getJSON = function (url, errorMsg = "Something went wrong") {
+  return fetch(url).then((response) => {
+    //if the error is thrown then the promise are terminated and it goes down to catch
+    if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+    return response.json();
+  });
+};
+
+const get3Countries = async function (c1, c2, c3) {
+  try {
+    // const [data1] = await getJSON(`https://restcountries.eu/rest/v2/name/${c1}`);
+    // const [data2] = await getJSON(`https://restcountries.eu/rest/v2/name/${c2}`);
+    // const [data3] = await getJSON(`https://restcountries.eu/rest/v2/name/${c3}`);
+
+    const data = await Promise.all([
+      getJSON(`https://restcountries.eu/rest/v2/name/${c1}`),
+      getJSON(`https://restcountries.eu/rest/v2/name/${c2}`),
+      getJSON(`https://restcountries.eu/rest/v2/name/${c3}`),
+    ]);
+    console.log(data);
+    console.log(data.map((d) => d[0].capital));
+
+    // console.log([data1.capital, data2.capital, data3.capital]);
+  } catch (err) {
+    console.error(err);
+  }
+};
+get3Countries("romania", "portugal", "tanzania");
