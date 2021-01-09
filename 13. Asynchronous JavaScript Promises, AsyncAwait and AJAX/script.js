@@ -862,9 +862,10 @@ const getJSON = function (url, errorMsg = "Something went wrong") {
 
 const get3Countries = async function (c1, c2, c3) {
   try {
-    // const [data1] = await getJSON(`https://restcountries.eu/rest/v2/name/${c1}`);
-    // const [data2] = await getJSON(`https://restcountries.eu/rest/v2/name/${c2}`);
-    // const [data3] = await getJSON(`https://restcountries.eu/rest/v2/name/${c3}`);
+    const [data1] = await getJSON(`https://restcountries.eu/rest/v2/name/${c1}`);
+    const [data2] = await getJSON(`https://restcountries.eu/rest/v2/name/${c2}`);
+    const [data3] = await getJSON(`https://restcountries.eu/rest/v2/name/${c3}`);
+    console.log("datas: ", data1, data2, data3);
 
     const data = await Promise.all([
       getJSON(`https://restcountries.eu/rest/v2/name/${c1}`),
@@ -874,9 +875,184 @@ const get3Countries = async function (c1, c2, c3) {
     console.log(data);
     console.log(data.map((d) => d[0].capital));
 
-    // console.log([data1.capital, data2.capital, data3.capital]);
+    console.log([data1.capital, data2.capital, data3.capital]);
   } catch (err) {
     console.error(err);
   }
 };
 get3Countries("romania", "portugal", "tanzania");
+
+//------------------------------Other promise combinators: Race, Allsettled and Any
+//Promise.race
+//array of prommises and return a promise
+//faster prmomise wins the race,(doesn't matter if is rejected or repsonse), it short circuite
+
+//This is pretty usefull for the situation when the data should be rejected and the user should be informed that fetching the data takes too long
+// const getJSON = function (url, errorMsg = "Something went wrong") {
+//   return fetch(url).then((response) => {
+//     //if the error is thrown then the promise are terminated and it goes down to catch
+//     if (!response.ok) throw new Error(`${errorMsg} (${response.status})`);
+//     return response.json();
+//   });
+// };
+// //IFFI(funtions that run only once)
+// (async function () {
+//   const res = await Promise.race([
+//     getJSON(`https://restcountries.eu/rest/v2/name/italy`),
+//     getJSON(`https://restcountries.eu/rest/v2/name/mexic`),
+//     getJSON(`https://restcountries.eu/rest/v2/name/romania`),
+//   ]);
+//   console.log(res[0]);
+// })();
+
+// const timeout = function (s) {
+//   return new Promise(function (_, reject) {
+//     setTimeout(function () {
+//       reject(new Error("request took too long"));
+//     }, s * 1000);
+//   });
+// };
+
+// Promise.race([getJSON(`https://restcountries.eu/rest/v2/name/romania`), timeout(0.1)])
+//   .then((res) => console.log(res[0]))
+//   .catch((err) => console.error(err));
+
+//Promise.allSettled(ES2020)
+//returned all the settled promises
+// Promise.allSettled([
+//   Promise.resolve("Success"),
+//   Promise.reject("ERROR"),
+//   Promise.resolve("Another success"),
+// ])
+//   .then((res) => console.log(res))
+//   .catch((err) => console.error(err));
+
+// //Promise.any (ES2021)
+// //return the first fulfilled promise
+// Promise.any([
+//   Promise.resolve("Success"),
+//   Promise.reject("ERROR"),
+//   Promise.resolve("Another success"),
+// ])
+//   .then((res) => console.log(res))
+//   .catch((err) => console.error(err));
+
+///////////////////////////////////////
+// Coding Challenge #3
+
+/* 
+PART 1
+Write an async function 'loadNPause' that recreates Coding Challenge #2, this time using async/await (only the part where the promise is consumed). Compare the two versions, think about the big differences, and see which one you like more.
+Don't forget to test the error handler, and to set the network speed to 'Fast 3G' in the dev tools Network tab.
+
+PART 2
+1. Create an async function 'loadAll' that receives an array of image paths 'imgArr';
+2. Use .map to loop over the array, to load all the images with the 'createImage' function (call the resulting array 'imgs')
+3. Check out the 'imgs' array in the console! Is it like you expected?
+4. Use a promise combinator function to actually get the images from the array 😉
+5. Add the 'paralell' class to all the images (it has some CSS styles).
+
+TEST DATA: ['img/img-1.jpg', 'img/img-2.jpg', 'img/img-3.jpg']. To test, turn off the 'loadNPause' function.
+
+GOOD LUCK 😀
+*/
+
+const wait = function (seconds) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+const imgContainer = document.querySelector(".images");
+
+const createImage = function (imgPath) {
+  return new Promise(function (resolve, reject) {
+    const img = document.createElement("img");
+    img.src = imgPath;
+
+    img.addEventListener("load", function () {
+      imgContainer.append(img);
+      resolve(img);
+    });
+
+    img.addEventListener("error", function () {
+      reject(new Error("Image not found"));
+    });
+  });
+};
+
+let currentImg;
+// createImage("img/img-1.jpg")
+//   .then((img) => {
+//     currentImg = img;
+//     console.log("Image 1 loaded");
+//     return wait(4);
+//   })
+//   .then(() => {
+//     console.log("4 seconds passed");
+//     currentImg.style.display = "none";
+//     return wait(4);
+//   })
+//   .then(() => {
+//     console.log("4 seconds of empty passed");
+//     // currentImg.style.display = "none";
+//     return createImage("img/img-2.jpg");
+//   })
+//   .then((img) => {
+//     currentImg = img;
+//     console.log("Image 2 loaded");
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = "none";
+//   })
+//   .catch((err) => console.error(err));
+
+const loadNPause = async function () {
+  try {
+    let image = await createImage("img/img-1.jpg");
+    // currentImg = image;
+
+    let wait3 = await wait(3); //.then(() => (currentImg.style.display = "none"));
+    // currentImg.style.display = "none";
+    image.style.display = "none";
+
+    await wait(3);
+
+    image = await createImage("img/img-2.jpg");
+    // currentImg = image;
+
+    await wait(3);
+
+    image.style.display = "none";
+  } catch (error) {
+    console.error(error.message);
+  }
+};
+// loadNPause();
+
+// 1. Create an async function 'loadAll' that receives an array of image paths 'imgArr';
+// 2. Use .map to loop over the array, to load all the images with the 'createImage' function (call the resulting array 'imgs')
+// 3. Check out the 'imgs' array in the console! Is it like you expected?
+// 4. Use a promise combinator function to actually get the images from the array 😉
+// 5. Add the 'paralell' class to all the images (it has some CSS styles).
+const loadAll = async function (imgArr) {
+  try {
+    const imgs = imgArr.map(async (imgSrc) => {
+      const img = await createImage(imgSrc);
+      return img;
+    });
+    //the async function always return promise
+    console.log("Something array of images: ", imgs);
+    // const realImgs = await Promise.allSettled(imgs);
+    const realImgs = await Promise.all(imgs);
+    console.log("the image elements", realImgs);
+    realImgs.forEach((img) => {
+      img.classList.add("parallel");
+    });
+  } catch (error) {
+    console.error(`Something is not working. ${error.message}`);
+  }
+};
+
+loadAll(["img/img-1.jpg", "img/img-2.jpg", "img/img-3.jpg"]);
