@@ -22,14 +22,14 @@
 
 // //----------------------import default exports
 // // import add, { addToCart, totalPrice as price, totalQuantity } from "./shoppingCart.js";
-// import add, { cart } from "./shoppingCart.js";
-// add("pizza", 2);
-// add("bread", 2);
-// add("apples", 2);
-// // console.log(price);
+import add, { cart } from "./shoppingCart.js";
+add("pizza", 2);
+add("bread", 2);
+add("apples", 2);
+// console.log(price);
 
 // //imports are not copy of the exports, they are linked and they are pointing to the same data in the memory
-// console.log(cart);
+console.log(cart);
 
 //-------------------------------------------Old modules works but have limitations
 // const ShoppingCart2 = (function () {
@@ -92,7 +92,9 @@
 //install lodash library for different functions: npm -i lodash-es(for ES modules)-> if not wee need a bondle modulator
 
 //import javascript file for lodash for deep clone
-import cloneDeep from "./node_modules/lodash-es/cloneDeep.js";
+// import cloneDeep from "./node_modules/lodash-es/cloneDeep.js";
+import cloneDeep from "lodash-es"; //simple import
+// import cloneDeep from "lodash"; //simple import
 
 const state = {
   cart: [
@@ -105,11 +107,71 @@ const state = {
 //shallow copy
 const stateClone = Object.assign({}, state);
 // state.user.loggedIn = false;
-console.log(stateClone);
 
 //need lodash for deep copy
 const stateDeepClone = cloneDeep(state);
 state.user.loggedIn = false;
+console.log(stateClone);
 console.log(stateDeepClone);
 
 //if the project is moved somewhere else we can use "npm i" to intall all the dependencies and libraries back
+
+//------------------------Bundling with Parcel and NPM scripts
+//save-dev is used when we install tools not direct dependencies
+//install like npm i parcel --sav-dev
+
+//need to install global install to use the commands
+
+//npx commands :->npx parcel index.html
+//install exact version:->npm i parcel@1.12.4
+//uninstall:-> npm uninstall parcel
+
+//parcel build a script, and the type="module " doesn't work
+
+//hot module replacement:-> will not reload the page
+if (module.hot) {
+  module.hot.accept();
+}
+
+//create a script for running the running parcel
+//"start": "parcel index.html"
+//and running it with npm run "scriptName"
+
+//run final bundle
+
+//install packages globally: npm i parcel "-g"
+
+//globally means we don't need to write npx , but is not good for keeping the local version of libraries updated
+
+//Configuring BBABEL and polyfilling
+//BABEL for transpiling to ES5
+
+class Person {
+  greeting = "Hei";
+  constructor(name) {
+    this.name = name;
+    console.log(`${this.greeting} ${this.name}`);
+  }
+}
+
+const grig = new Person("Grig");
+
+console.log("Grig" ?? null);
+
+console.log(cart.find((el) => el.quantity >= 2));
+//find(), Promise, newer features are not translated to ES5
+//only syntax can be transpile
+//features need to polyfilling
+Promise.resolve("TEST").then((x) => console.log(x));
+
+//need a library for polyfilling
+//install npm i core-js
+import "core-js/stable";
+// import "core-js/stable/array/find";
+// import "core-js/stable/array/promise";
+
+//Polyfilling async functions
+//npm i regenerator-runtime
+import "regenerator-runtime/runtime";
+
+//------------------Modern, clean and Declarative JavaScript Programming
