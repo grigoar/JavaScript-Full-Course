@@ -1,0 +1,3 @@
+#Images ignored
+*.orig
+/node_modules/

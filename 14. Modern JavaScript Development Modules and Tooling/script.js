@@ -32,32 +32,84 @@
 // console.log(cart);
 
 //-------------------------------------------Old modules works but have limitations
-const ShoppingCart2 = (function () {
-  const cart = [];
-  const shippingCost = 10;
-  const totalPrice = 237;
-  const totalQuantity = 23;
+// const ShoppingCart2 = (function () {
+//   const cart = [];
+//   const shippingCost = 10;
+//   const totalPrice = 237;
+//   const totalQuantity = 23;
 
-  const addToCart = function (product, quantity) {
-    cart.push({ product, quantity });
-    console.log(`${quantity} ${product} added to the cart (shipping cost id ${shippingCost})`);
-  };
+//   const addToCart = function (product, quantity) {
+//     cart.push({ product, quantity });
+//     console.log(`${quantity} ${product} added to the cart (shipping cost id ${shippingCost})`);
+//   };
 
-  const orderStock = function (product, quantity) {
-    cart.push({ product, quantity });
-    console.log(`${quantity} ${product} order from supplier`);
-  };
+//   const orderStock = function (product, quantity) {
+//     cart.push({ product, quantity });
+//     console.log(`${quantity} ${product} order from supplier`);
+//   };
 
-  return {
-    addToCart,
-    cart,
-    totalPrice,
-    totalQuantity,
-  };
-})();
-ShoppingCart2.addToCart("apple", 5);
-ShoppingCart2.addToCart("pizza", 2);
+//   return {
+//     addToCart,
+//     cart,
+//     totalPrice,
+//     totalQuantity,
+//   };
+// })();
+// ShoppingCart2.addToCart("apple", 5);
+// ShoppingCart2.addToCart("pizza", 2);
 
-//-------------------Everything closures
-console.log(ShoppingCart2);
-console.log(ShoppingCart2.shippingCost); //undefined
+// //-------------------Everything closures
+// console.log(ShoppingCart2);
+// console.log(ShoppingCart2.shippingCost); //undefined
+
+//---------------------------COMMONJS Modules
+//Export
+//this works in nodeJS, this not working in browser
+// export.addToCart = function (product, quantity) {
+//       cart.push({ product, quantity });
+//       console.log(`${quantity} ${product} added to the cart (shipping cost id ${shippingCost})`);
+//     };
+
+// //Import
+// const {addToCart} = require("./shoppingCart.js")
+
+//---------------------------A brief introduction to the command line
+//:ls
+//cd ..
+//cd
+//cd ../..
+//create a new folder: mkdir folderName
+// type nul > your_file.txt ;>   Creates a new file; >>  Preserves content of the file
+//CTRL + C : cancel command
+//delete: del fileName
+//move move fileName location(../)
+//delete folder: rmdir TEST
+
+//------------------------Introduction to NPM
+//Node packaging manager(managing all the libraries and dependencies in one place)
+//npm init to create package.json
+//install library: npm install leaflet , npm i leaflet
+//install lodash library for different functions: npm -i lodash-es(for ES modules)-> if not wee need a bondle modulator
+
+//import javascript file for lodash for deep clone
+import cloneDeep from "./node_modules/lodash-es/cloneDeep.js";
+
+const state = {
+  cart: [
+    { product: "bread", quantity: 5 },
+    { product: "pizza", quantity: 3 },
+  ],
+  user: { loggedIn: true },
+};
+
+//shallow copy
+const stateClone = Object.assign({}, state);
+// state.user.loggedIn = false;
+console.log(stateClone);
+
+//need lodash for deep copy
+const stateDeepClone = cloneDeep(state);
+state.user.loggedIn = false;
+console.log(stateDeepClone);
+
+//if the project is moved somewhere else we can use "npm i" to intall all the dependencies and libraries back
