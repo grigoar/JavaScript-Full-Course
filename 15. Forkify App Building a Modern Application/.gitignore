@@ -1,0 +1,7 @@
+#Images ignored
+*.orig
+/node_modules/
+/dist/
+/.cache/
+package-lock.json
+/.parcel-cache/
