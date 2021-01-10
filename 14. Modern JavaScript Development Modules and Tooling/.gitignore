@@ -1,3 +1,5 @@
 #Images ignored
 *.orig
 /node_modules/
+/dist/
+/.cache/
