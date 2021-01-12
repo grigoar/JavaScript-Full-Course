@@ -1,25 +1,23 @@
 import * as model from "./model.js";
 import recipeView from "./views/recipeView.js";
+import searchView from "./views/searchView.js";
+import resultsView from "./views/resultsView";
 
 //polyfilling everyting else
 import "core-js/stable";
 //polyfilling async await
 import "regenerator-runtime/runtime";
 // console.log(icons);
-const recipeContainer = document.querySelector(".recipe");
-
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
+// const recipeContainer = document.querySelector(".recipe");
 
 // https://forkify-api.herokuapp.com/v2
 
 ///////////////////////////////////////
 // console.log("Test");
+
+// if (module.hot) {
+//   module.hot.accept();
+// }
 
 const controlRecipes = async function () {
   try {
@@ -41,12 +39,44 @@ const controlRecipes = async function () {
     //2) Rendering recipe
     recipeView.render(model.state.recipe);
   } catch (error) {
-    alert("Error from async controller: ", error);
+    // console.log("Error from async controller: ", error);
+    // recipeView.renderError(`${error.message}`);
+    recipeView.renderError();
   }
 };
 
+const controlSearchResults = async function () {
+  try {
+    resultsView.renderSpinner();
+    // console.log(resultsView);
+    //1) Get search query
+    const query = searchView.getQuery();
+    if (!query) return;
+
+    //2) Load search results
+    await model.loadSearchResults(query);
+
+    //3) Render results
+    // resultsView.render(model.state.search.results);
+    resultsView.render(model.getSearchResultPage(3));
+    console.log(model.state.search.results);
+  } catch (err) {
+    console.log(err);
+  }
+};
+// controlSearchResults();
+//Publisher - subscriber again
+
 // controlRecipes();
-["hashchange", "load"].forEach((ev) => window.addEventListener(ev, controlRecipes));
+
+//-----------------------Event handlers in MVC: Publisher-subscriber pattern
+//The subscriber function must be passed as an argument for the publisher.
+const init = function () {
+  recipeView.addHandlerRender(controlRecipes);
+  searchView.addHandlerSearch(controlSearchResults);
+};
+init();
+
 // window.addEventListener("hashchange", controlRecipes);
 //listening when the page is loading
 // window.addEventListener("load", controlRecipes);
@@ -55,3 +85,8 @@ const controlRecipes = async function () {
 //------------------------rendering the recipe
 //------------------------- Listening for load and hashchange events
 //-----------------------The MVC Architecture
+//-----------------------Helpers and configuration files
+//-----------------------Event handlers in MVC: Publisher-subscriber pattern
+//-----------------------Implementing Errors and success messages
+//-----------------------Implementing Search Results P1, P2
+//-----------------------Implementing Pagination P1, P2
