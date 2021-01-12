@@ -10,6 +10,7 @@ export const state = {
     resultsPerPage: RES_PER_PAGE,
     page: 1,
   },
+  bookmarks: [],
 };
 
 // if (module.hot) {
@@ -33,7 +34,11 @@ export const loadRecipe = async function (id) {
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients,
     };
-    // console.log("My object received", state.recipe);
+
+    if (state.bookmarks.some((bookmark) => bookmark.id === id)) state.recipe.bookmarked = true;
+    else state.recipe.bookmarked = false;
+
+    console.log("My object received", state.recipe);
   } catch (error) {
     //receiving the propagated error
     console.log("Error from async model: ", error.message);
@@ -56,6 +61,8 @@ export const loadSearchResults = async function (query) {
         image: rec.image_url,
       };
     });
+    //updating the page to 1 for each new search
+    state.search.page = 1;
     // console.log(state.search.results);
   } catch (error) {
     console.log("Error from async model: ", error.message);
@@ -71,4 +78,31 @@ export const getSearchResultPage = function (page = state.search.page) {
   const start = (page - 1) * state.search.resultsPerPage; //0;
   const end = page * state.search.resultsPerPage; //9;
   return state.search.results.slice(start, end);
+};
+
+export const updateServings = function (newServings) {
+  state.recipe.ingredients.forEach((ing) => {
+    ing.quantity = (ing.quantity * newServings) / state.recipe.servings;
+    // newQuantity = oldQT * newServings /oldServings// 2 * 8 /4 = 4
+  });
+
+  state.recipe.servings = newServings;
+};
+
+export const addBookmark = function (recipe) {
+  //Add bookmark
+  state.bookmarks.push(recipe);
+
+  //Mark current recipe as bookmark
+  if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+};
+
+export const deleteBookmark = function (id) {
+  console.log(`Bookmark with ${id} to delete`);
+  // Delete bookmark
+  const index = state.bookmarks.findIndex((el) => el.id === id);
+  state.bookmarks.splice(index, 1);
+
+  // Mark current recipe as NOT bookmarked
+  if (id === state.recipe.id) state.recipe.bookmarked = false;
 };
