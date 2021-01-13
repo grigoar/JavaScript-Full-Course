@@ -4,6 +4,8 @@ import searchView from "./views/searchView.js";
 import resultsView from "./views/resultsView";
 import paginationView from "./views/paginationView";
 import bookmarksView from "./views/bookmarksView";
+import addRecipeView from "./views/addRecipeView";
+import { MODAL_CLOSE_SEC } from "./config.js";
 
 //polyfilling everyting else
 import "core-js/stable";
@@ -33,8 +35,11 @@ const controlRecipes = async function () {
 
     //0) Update results view to mark selected search result
     resultsView.update(model.getSearchResultPage());
-    bookmarksView.update(model.state.bookmarks);
+
     // resultsView.render(model.getSearchResultPage());
+    //0.5) Updating bookmarks view
+    // debugger;
+    bookmarksView.update(model.state.bookmarks);
 
     //1)Loading recipe
     //a async function calling another async function
@@ -54,6 +59,7 @@ const controlRecipes = async function () {
     // console.log("Error from async controller: ", error);
     // recipeView.renderError(`${error.message}`);
     recipeView.renderError();
+    console.error(error);
   }
 };
 
@@ -118,15 +124,54 @@ const controlAddBookMark = function () {
   bookmarksView.render(model.state.bookmarks);
 };
 
+const controlBookmarks = function () {
+  bookmarksView.render(model.state.bookmarks);
+};
+
+const controlAddRecipe = async function (newRecipe) {
+  // console.log(newRecipe);
+  try {
+    // Show loading spinner
+    addRecipeView.renderSpinner();
+
+    //Upload the new recipe data
+    await model.uploadRecipe(newRecipe);
+
+    console.log(model.state.recipe);
+
+    // Render recipe
+    recipeView.render(model.state.recipe);
+
+    //Success message
+    addRecipeView.renderMessage();
+
+    // Render bookmark view
+    bookmarksView.render(model.state.bookmarks);
+
+    //Change ID in URL
+    window.history.pushState(null, "", `#${model.state.recipe.id}`);
+    // window.history.back();
+
+    //Close form window
+    setTimeout(function () {
+      addRecipeView.toggleWindow();
+    }, MODAL_CLOSE_SEC * 1000);
+  } catch (error) {
+    console.error("My error!", error);
+    addRecipeView.renderError(error.message);
+  }
+};
+
 //-----------------------Event handlers in MVC: Publisher-subscriber pattern
 //The subscriber function must be passed as an argument for the publisher.
 const init = function () {
+  bookmarksView.addHandlerRender(controlBookmarks);
   recipeView.addHandlerRender(controlRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
   recipeView.addHandlerAddBookmark(controlAddBookMark);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
-
+  addRecipeView.addHandlerUpload(controlAddRecipe);
   // controlServings();
 };
 init();
@@ -135,6 +180,16 @@ init();
 //listening when the page is loading
 // window.addEventListener("load", controlRecipes);
 
+//-----------------------Future ideas challenges:
+//-Dispaly number of pages between the pagination buttons;
+//-Ability to sort search results by duration or number of ingredients;
+//-Perform ingredient validation in view, before submitting the form;
+//-Improve recipe ingredient input: separate in multiple fields and allow more than 6 ingredients;
+//--Shopping list features: button on recipe to add ingredients to a list;
+//--Weekly meal planning feature: assign recipes to the next 7 days and show on a weekly calendar;
+//--Get nutrition data on each ingredient from spoonacular API(https://spoonacular.com/food-api) and calculate total calories of recipe.
+
+//-----------------------Project Planning I
 //-----------------------Receiving the recipe from API
 //-----------------------Rendering the recipe
 //-----------------------Listening for load and hashchange events
@@ -150,3 +205,8 @@ init();
 //-----------------------Update Recipe Servings
 //-----------------------Developing a DOM updating Algorithm
 //-----------------------Implementing Bookmarks P1, P2
+
+//-----------------------Storing Bookmarks with localStorage(persistance)
+//-----------------------Project Planning III
+//-----------------------Uploading a new recipe P1, P2, P3
+//-----------------------Writing documentation and tips
